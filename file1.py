@@ -6,7 +6,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 
 SCREEN_SIZE = [600, 450]
-x, y = map(int, input().split())
+x, y = input().split()
 mash = int(input())
 
 
@@ -20,19 +20,14 @@ class Example(QWidget):
         geocoder_api_server = "http://static-maps.yandex.ru/1.x/"
 
         geocoder_params = {
-            "ll": str(x)+','+str(y) ,
-            "z":mash}
-        map_request = requests.get(geocoder_api_server, params=geocoder_params)
-        print(map_request)
+            "ll": x + ',' + y,
+            "z": mash,
+            'l': 'map'}
 
-        if not map_request:
-            # обработка ошибочной ситуации
-            pass
-        response = requests.get(map_request)
+        response = requests.get(geocoder_api_server, params=geocoder_params)
 
         if not response:
             print("Ошибка выполнения запроса:")
-            print(map_request)
             print("Http статус:", response.status_code, "(", response.reason, ")")
             sys.exit(1)
 
@@ -55,6 +50,7 @@ class Example(QWidget):
     def closeEvent(self, event):
         """При закрытии формы подчищаем за собой"""
         os.remove(self.map_file)
+#Первая задача
 
 
 if __name__ == '__main__':
