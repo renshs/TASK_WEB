@@ -4,10 +4,12 @@ import sys
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
+from PyQt5.QtCore import Qt
 
 SCREEN_SIZE = [600, 450]
 x, y = input().split()
 mash = int(input())
+zi = mash
 
 
 class Example(QWidget):
@@ -18,10 +20,9 @@ class Example(QWidget):
 
     def getImage(self):
         geocoder_api_server = "http://static-maps.yandex.ru/1.x/"
-
         geocoder_params = {
             "ll": x + ',' + y,
-            "z": mash,
+            "z": zi,
             'l': 'map'}
 
         response = requests.get(geocoder_api_server, params=geocoder_params)
@@ -35,13 +36,14 @@ class Example(QWidget):
         self.map_file = "map.png"
         with open(self.map_file, "wb") as file:
             file.write(response.content)
+            self.initUI()
 
     def initUI(self):
         self.setGeometry(100, 100, *SCREEN_SIZE)
         self.setWindowTitle('Отображение карты')
 
         ## Изображение
-        self.pixmap = QPixmap(self.map_file)
+        self.pixmap = QPixmap("map.png")
         self.image = QLabel(self)
         self.image.move(0, 0)
         self.image.resize(600, 450)
@@ -50,7 +52,15 @@ class Example(QWidget):
     def closeEvent(self, event):
         """При закрытии формы подчищаем за собой"""
         os.remove(self.map_file)
-#Первая задача
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_PageUp:
+            global zi
+            zi += 1
+            self.getImage()
+
+
+# Первая задача
 
 
 if __name__ == '__main__':
